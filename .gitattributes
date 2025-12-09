@@ -1,0 +1,15 @@
+* text=auto
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+
+# Binary files that shouldn't be modified
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
