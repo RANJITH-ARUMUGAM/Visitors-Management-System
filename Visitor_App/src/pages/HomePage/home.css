@@ -1,0 +1,423 @@
+/* /////////////////////////////////////////////////////  Root and Body Start  ////////////////////////////////////////////////////////////////// */
+
+:root {
+  --transition-duration: 0.3s;
+  --transition-easing: ease;
+  --clr: #ffffff;
+  --color-primary: #163868;
+  --color-secondary: #0f2441;
+  --color-accent: #5a99ad;
+  --color-bg-light: #c0e3ff;
+  --color-bg-dark: #070708;
+  --color-text-light: #ffffff;
+  --color-text-dark: #333333;
+  --color-error: #dc3545;
+  --color-sidebar-gradient-start: #163868;
+  --color-sidebar-gradient-end: #5a99ad;
+  --color-hover-bg: rgba(90, 153, 173, 0.3);
+  --color-active-bg: rgba(90, 153, 173, 0.4);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--color-bg-light);
+}
+
+/* Layout */
+.layout-unique {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: var(--color-bg-light);
+}
+
+/* /////////////////////////////////////////////////////  Root and Body END ////////////////////////////////////////////////////////////////// */
+
+/* /////////////////////////////////////////////////////  Top Nav Start ////////////////////////////////////////////////////////////////// */
+
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  background: linear-gradient(90deg,
+      var(--color-secondary) 0%,
+      var(--color-primary) 100%);
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  left: 90px;
+  border-radius: 30px;
+  transition: left var(--transition-duration) var(--transition-easing);
+  z-index: 1000;
+}
+
+.sidebar-unique.open-unique+.top-navbar {
+  left: 265px;
+}
+
+/* ///////////////////////////////////////////////////////// Top Nav END ////////////////////////////////////////////////////////////// */
+
+/* ////////////////////////////////////////////////////////// Aside (Sidebar) Start ///////////////////////////////////////////////////////////// */
+
+/* Sidebar Container */
+.sidebar-unique {
+  width: 85px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+  margin: 0;
+  color: var(--color-text-light);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  transition: width var(--transition-duration) var(--transition-easing);
+}
+
+/* Expanded Sidebar */
+.sidebar-unique.open-unique {
+  width: 265px;
+}
+
+/* Toggle Button */
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  font-size: 25px;
+  padding: 20px 30px;
+  transition: color var(--transition-duration) var(--transition-easing),
+    transform 1s ease;
+}
+
+.toggle-btn:hover {
+  color: #c0c0c0;
+  transform: rotate(360deg);
+}
+
+/* Logo Section */
+.sidebar-logo {
+  margin: auto 0;
+  margin-left: 0;
+}
+
+.sidebar-logo a {
+  color: var(--color-text-light);
+  margin-left: 0;
+  padding-left: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Collapsed/Expanded Text & Logo */
+.sidebar-unique:not(.open-unique) .sidebar-logo,
+.sidebar-unique:not(.open-unique) .sidebar-link span {
+  display: none !important;
+}
+
+.sidebar-unique.open-unique .sidebar-logo,
+.sidebar-unique.open-unique .sidebar-link span {
+  display: block !important;
+}
+
+/* Navigation List */
+.nav-list-unique {
+  list-style: none;
+  padding-left: 17px;
+  margin: 0;
+}
+
+/* Sidebar Item */
+.sidebar-item {
+  position: relative;
+  margin: 2px 0;
+}
+
+/* Navigation Links */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 7px 7px;
+  color: var(--color-text-light);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 4px 0 0 4px;
+  position: relative;
+  z-index: 1;
+  border-left: none;
+}
+
+/* Hover / Active Effects */
+.sidebar-link:hover,
+.sidebar-link.has-dropdown:hover,
+.sidebar-link.has-dropdown[aria-expanded="true"]:hover,
+.sidebar-link.has-dropdown[aria-expanded="false"]:hover {
+  background-color: var(--color-bg-light);
+  color: var(--color-primary);
+  border-top-left-radius: 50px;
+  border-bottom-left-radius: 50px;
+  overflow: visible;
+}
+
+/* Top Curved Corner */
+.sidebar-link:hover::before,
+.sidebar-link.has-dropdown:hover::before {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 0;
+  top: -20px;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-bottom-right-radius: 50%;
+  box-shadow: 10px 10px 0 -0.5px var(--color-bg-light) !important;
+  pointer-events: none;
+}
+
+/* Bottom Curved Corner */
+.sidebar-link:hover::after {
+  content: "";
+  position: absolute;
+  right: 0 !important;
+  bottom: -20px;
+  width: 20px;
+  height: 20px;
+  border-top-right-radius: 50%;
+  box-shadow: 5px -5px 0 0.5px var(--color-bg-light) !important;
+  background: transparent;
+}
+
+/* Dropdown Hover Bottom Curve */
+.sidebar-link.has-dropdown:hover::after {
+  content: "";
+  margin-top: 40px;
+  position: absolute;
+  right: 0 !important;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: 0 !important;
+  border-color: transparent !important;
+  border-style: none !important;
+  box-shadow: 0 -14px 0 0 var(--color-bg-light) !important;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.sidebar-link.has-dropdown[aria-expanded="true"]:hover::after {
+  content: "";
+  position: absolute;
+  right: 0 !important;
+  bottom: -17px;
+  width: 17px;
+  height: 17px;
+  border-top-right-radius: 50%;
+  box-shadow: 5px -5px 0 0.1px var(--color-bg-light) !important;
+  background: transparent;
+}
+
+.sidebar-link.has-dropdown[aria-expanded="false"]:hover::after {
+  content: "";
+  position: absolute;
+  right: 0 !important;
+  bottom: -17px;
+  width: 17px;
+  height: 17px;
+  border-top-right-radius: 50%;
+  box-shadow: 5px -5px 0 0.1px var(--color-bg-light) !important;
+  background: transparent;
+}
+
+/* Icons */
+.sidebar-item i {
+  font-size: 1.3rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  color: var(--color-text-light);
+  background: linear-gradient(145deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-radius: 50%;
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2), -4px -4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-link:hover i,
+.sidebar-link.active i,
+.sidebar-link.has-dropdown:hover i,
+.sidebar-link.has-dropdown[aria-expanded="true"] i {
+  background: linear-gradient(145deg, var(--color-accent) 0%, var(--color-primary) 100%);
+  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.25), -6px -6px 12px rgba(255, 255, 255, 0.15);
+  color: var(--color-text-light);
+}
+
+/* Text Span */
+.sidebar-item span {
+  display: inline;
+  font-weight: 500;
+}
+
+/* Dropdown */
+.sidebar-dropdown {
+  padding-left: 0;
+  margin: 0;
+  background-color: transparent;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+/* Dropdown Show State */
+.sidebar-dropdown.show,
+.sidebar-dropdown.collapse.show {
+  max-height: 500px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Collapsed Dropdown State */
+.sidebar-unique:not(.open-unique) .sidebar-dropdown {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Dropdown Links */
+.sidebar-dropdown .sidebar-link {
+  font-size: 0.9rem;
+  padding: 10px 15px 10px 3rem;
+  margin-right: 0;
+}
+
+.sidebar-dropdown .sidebar-link:hover {
+  font-size: 0.9rem;
+  border-left: 2px solid red;
+  margin-right: 0;
+}
+
+/* Dropdown Arrow Indicators */
+.sidebar-unique.open-unique .sidebar-link.has-dropdown .dropdown-arrow {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-text-light);
+  transition: transform var(--transition-duration) var(--transition-easing);
+}
+
+.sidebar-unique.open-unique .sidebar-link.has-dropdown[aria-expanded="true"] .dropdown-arrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Hide arrow when sidebar is collapsed */
+.sidebar-unique:not(.open-unique) .sidebar-link.has-dropdown .dropdown-arrow {
+  display: none;
+}
+
+/* Ensure the existing pseudo-elements don't conflict */
+.sidebar-unique.open-unique .sidebar-link[data-bs-toggle="collapse"]::after,
+.sidebar-unique.open-unique .sidebar-link[data-bs-toggle="collapse"]:not(.collapsed)::after {
+  content: none !important;
+}
+
+/* Collapse Transition Overrides */
+.collapse:not(.show) {
+  display: none;
+}
+
+.collapsing {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ////////////////////////////////////////////////////////// Aside (Sidebar) End ///////////////////////////////////////////////////////////// */
+
+/* /////////////////////////////////////////////////////////// Main Content Start //////////////////////////////////////////////////////////// */
+
+/* Main Content */
+.main-content-unique {
+  flex: 1;
+  margin-top: 80px;
+  margin-left: 80px;
+  padding: 10px;
+  margin-bottom: 0;
+  transition: margin-left var(--transition-duration) var(--transition-easing);
+  background-color: var(--color-bg-light);
+  min-height: calc(100vh - 80px);
+  overflow-x: hidden;
+}
+
+.sidebar-unique.open-unique+.top-navbar+.main-content-unique {
+  margin-left: 135px;
+}
+
+.main-content-unique h2 {
+  font-size: 1rem;
+  font-weight: bold;
+  background: linear-gradient(90deg,
+      var(--color-secondary) 0%,
+      var(--color-primary) 100%);
+  color: var(--color-text-light);
+  margin-top: 0;
+  padding: 2px;
+  padding-left: 10px;
+  border-radius: 10px;
+  margin: 0px;
+}
+
+/* /////////////////////////////////////////////////////////// Main Content End //////////////////////////////////////////////////////////// */
+
+/* //////////////////////////////////////////////////////////// Shared/Utility Styles Start  /////////////////////////////////////////////////////////// */
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.shift-right-unique {
+  margin-left: 125px;
+  left: 145px;
+  transition: margin-left var(--transition-duration) var(--transition-easing), left var(--transition-duration) var(--transition-easing);
+}
+
+/* //////////////////////////////////////////////////////////// Responsive Updated — iPad + Mobile /////////////////////////////////////////////////////////// */
+
+
+
+
+/* //////////////////////////////////////////////////////////// Shared/Utility Styles End  /////////////////////////////////////////////////////////// */

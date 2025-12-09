@@ -1,0 +1,40 @@
+
+/* Enable scrolling */
+html, body {
+    height: 100%;
+    overflow-y: auto;
+    background-color: #f0f8ff;
+    font-family:"Poppins";
+     /* NOTE: removed global font-size (previously 90%).
+         Login form will be reduced specifically so we don't affect the rest
+         of the app site-wide. */
+}
+
+/* ------------------------------------------------------------------
+     Global small-font wrapper for non-login pages
+     - Use the .app-font-reduced wrapper (applied in App.js) to reduce
+         font sizes for the entire logged-in app only.
+     - The login page/component is not wrapped so it remains unchanged.
+     - Using em keeps reductions relative and less likely to break layout.
+------------------------------------------------------------------- */
+/* .app-font-reduced removed — root-level font-size handles the global reduction. */
+
+
+.scroll-container {
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+}
+
+/* Hide scrollbar but keep scrolling enabled */
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Fix potential flexbox issues */
+.content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 100vh;
+}

@@ -1,0 +1,312 @@
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.company-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-text-light);
+  /* Changed to variable */
+  padding-left: 10px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  /* margin-right: 10px; */
+}
+
+.notification-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Bell Icon */
+.notification-icon {
+  background: none;
+  border: none;
+  color: #c0c0c0;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.badge-notification {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  width: 14px;
+  height: 14px;
+  background-color: var(--color-error);
+  font-size: 0.7rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  border-radius: 50%;
+}
+
+/* Notification Dropdown Menu */
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 60px;
+  background: var(--color-text-light);
+  border-radius: 8px;
+  min-width: 200px;
+  padding: 10px 0;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notification-dropdown ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.notification-dropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  color: var(--color-text-dark);
+  /* Ensure text is dark */
+}
+
+.notification-dropdown li:hover {
+  background: #f1f6fb;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.profile-dropdown-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 0;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-text-light);
+  border-radius: 50%;
+  display: block;
+  margin: auto;
+  transition: transform 0.3s ease-in-out;
+}
+
+
+.profile-dropdown-trigger:hover .profile-img {
+  transform: scale(1.1);
+}
+
+.dropdown-menu-right {
+  position: absolute;
+  top: 70px;
+  right: -30px;
+  background-color: var(--color-bg-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 300px;
+  height: 30vh;
+  z-index: 1000;
+}
+
+/* Dropdown Header */
+.dropdown-header {
+  background: #f1f6fb;
+  text-align: center;
+  font-weight: bold;
+  padding: 13px 10px;
+  color: var(--color-primary);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  gap: 10px;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f1f6fb;
+}
+
+.logout {
+  color: var(--color-error);
+}
+
+.dropdown-info {
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Profile Texts */
+.profile-container div {
+  display: flex;
+  flex-direction: column;
+}
+
+.createdby {
+  color: var(--color-text-light);
+  /* Changed to variable (White) */
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.drawer-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  transition: background 0.8s;
+}
+
+/* Drawer Content (slides in from right) */
+.drawer-content {
+  background: var(--color-text-light);
+  /* Changed to variable (White) */
+  width: 340px;
+  max-width: 90vw;
+  height: 100%;
+  box-shadow: -2px 0 16px rgba(0, 0, 0, 0.12);
+  padding: 24px 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 1.0s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawer-content.open {
+  transform: translateX(0);
+}
+
+/* Drawer Header */
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  /* Changed to variable (Deep Blue) */
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 8px;
+}
+
+/* Close Button */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: var(--color-primary);
+  /* Changed to variable (Deep Blue) */
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: var(--color-error);
+  /* Changed to variable (Red) */
+}
+
+/* Drawer List Styles */
+.drawer-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.drawer-content li {
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 1rem;
+  color: var(--color-text-dark);
+  /* Dark text */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.drawer-content li:last-child {
+  border-bottom: none;
+}
+
+/* Drawer Actions (Profile) */
+.drawer-content .dropdown-item {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 10px 0;
+  font-size: 1rem;
+  color: var(--color-primary);
+  /* Changed to variable (Deep Blue) */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.drawer-content .dropdown-item:hover {
+  background: #f1f6fb;
+  /* Light cool hover background */
+}
+
+.drawer-content .logout {
+  color: var(--color-error);
+  /* Changed to variable (Red) */
+}
+
+/* Drawer Info Section */
+.drawer-info {
+  margin-top: 18px;
+  font-size: 0.95rem;
+  color: #555;
+  background: #f8fafc;
+  /* Very light cool background */
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  .drawer-content {
+    width: 100vw;
+    padding: 18px 8px;
+  }
+}

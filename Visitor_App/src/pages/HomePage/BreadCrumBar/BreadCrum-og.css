@@ -1,0 +1,80 @@
+.breadcrumbs {
+  margin-top: 0;
+  display: flex;
+  transition: margin-left 0.3s ease;
+}
+
+.breadcrumb-item {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 2px;
+  padding: 5px;
+  padding-top: 0;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.breadcrumb-item a {
+  text-decoration: none;
+}
+
+/* Non-visited link color */
+.breadcrumb-item a:link {
+  color: #2563eb;
+}
+
+/* Visited link color */
+.breadcrumb-item a:visited {
+  color: #3b82f6;
+}
+
+/* On hover, change color */
+.breadcrumb-item a:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+/* Active state */
+.breadcrumb-item a:active {
+  transform: translateY(1px);
+}
+
+/* Separator */
+
+
+/* Style the last item (current page) */
+.breadcrumb-item:last-child a {
+  font-weight: 600;
+  color: #64748b;
+  cursor: default;
+  pointer-events: none;
+
+}
+
+
+/* If Home is the current page */
+.breadcrumb-item:first-child:last-child a {
+  color: #64748b;
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .breadcrumbs {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .breadcrumb-item a {
+    padding: 4px 8px;
+  }
+
+  .separator::before {
+    margin: 0 6px;
+    font-size: 16px;
+  }
+}

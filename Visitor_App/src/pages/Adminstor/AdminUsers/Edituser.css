@@ -1,0 +1,158 @@
+/* General Styles */
+.edit-container {
+  padding: 20px;
+  background-color:#A9CFEF;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* h4 {
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+} */
+
+
+
+/* 🎯 Section Headings (h4) - Minimal & Clean */
+.section h4 {
+  font-size: 1rem;
+  color: white; /* Dark gray for readability */
+  background-color: #4197DC; /* Light grayish-white */
+  padding: 8px;
+  border-radius: 6px;
+  display: inline-block;
+  border-left: 5px solid #2F3C7E; /* Accent border for modern feel */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+.edit-form-group {
+  margin-bottom: 1px;
+  
+}
+
+.edit-form-label {
+  font-size: 12px;
+  color:black;
+  font-weight: bold;
+  margin:0;
+}
+
+.edit-form-control {
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 6px;
+  font-size: 12px;
+  transition: border-color 0.3s ease;
+  width:100%;/* Ensure inputs take full width */
+  appearance: auto;
+}
+
+.edit-form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.edit-form-switch .form-check-input {
+  width: 3em;
+  height: 1.5em;
+}
+
+.edit-btn {
+  color: white;
+  margin: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+  width: 100px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+/* Right Section Styles */
+.edit-right-section .section {
+  background-color:  #F4FAFF;
+  /* background-color: #C2F1FE; */
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-right-section .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Space between columns */
+}
+
+.edit-right-section .col {
+  flex: 1 1 1calc(50% - 20px); /* 2 columns per row with gap */
+  min-width: 250px; /* Minimum width for responsiveness */
+}
+
+/* Toggle Switch Styles */
+.edit-form-switch .form-check-input {
+  background-color: #ddd;
+  border-color: #ddd;
+}
+
+.edit-form-switch .form-check-input:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+/* Switcher4.css */
+.switch-container {
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  user-select: none;
+}
+
+.switch-wrapper {
+  position: relative;
+}
+
+.switch-input {
+  display: none;
+}
+
+.switch-box {
+  display: block;
+  height: 20px; /* Equivalent to h-8 in Tailwind */
+  width: 45px;  /* Equivalent to w-14 in Tailwind */
+  border-radius: 9999px; /* Equivalent to rounded-full in Tailwind */
+  background-color: #333; /* Equivalent to bg-dark in Tailwind */
+  transition: background-color 0.3s;
+}
+
+.switch-box.checked {
+  background-color: #007bff; /* Equivalent to bg-primary in Tailwind */
+}
+
+.switch-toggle {
+  position: absolute;
+  top: 2px; /* Equivalent to top-1 in Tailwind */
+  left: 4px; /* Equivalent to left-1 in Tailwind */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px; /* Equivalent to h-6 in Tailwind */
+  width: 18px;  /* Equivalent to w-6 in Tailwind */
+  border-radius: 9999px; /* Equivalent to rounded-full in Tailwind */
+  background-color: white;
+  transition: transform 0.3s;
+}
+
+.switch-toggle.checked {
+  transform: translateX(100%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+  .edit-right-section .col {
+    flex: 1 1 100%; /* Full width on smaller screens */
+  }
+}

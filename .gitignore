@@ -1,0 +1,16 @@
+# Backend
+Backend/node_modules/
+Backend/.env
+
+# Gatepass App
+Gatepass_App/node_modules/
+Gatepass_App/.env
+
+# Common ignores
+node_modules/
+dist/
+build/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
