@@ -71,7 +71,6 @@ export default function Home() {
     setp: []
   });
 
-  // Local UI state to manage which sidebar dropdowns are open
   const [openMenus, setOpenMenus] = useState({
     adm: false,
     ope: false,
@@ -82,7 +81,6 @@ export default function Home() {
     setp: false
   });
 
-  // State for disabled menus
   const [disabledMenus, setDisabledMenus] = useState({
     adm: true,
     ope: true,

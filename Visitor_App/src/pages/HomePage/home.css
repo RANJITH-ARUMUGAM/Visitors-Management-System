@@ -29,7 +29,6 @@ body {
   background-color: var(--color-bg-light);
 }
 
-/* Layout */
 .layout-unique {
   display: flex;
   flex-direction: column;
