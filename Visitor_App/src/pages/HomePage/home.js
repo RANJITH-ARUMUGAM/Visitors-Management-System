@@ -60,7 +60,7 @@ export default function Home() {
   const [isSidenavOpen, setIsSidenavOpen] = useState(false);
   const [displayValues, setDisplayValues] = useState({});
 
-  // State for menu data
+  // State for menudata
   const [menuData, setMenuData] = useState({
     adm: [],
     ope: [],
@@ -73,10 +73,13 @@ export default function Home() {
 
   // Local UI state to manage which sidebar dropdowns are open
   const [openMenus, setOpenMenus] = useState({
-    visi: false,
     adm: false,
+    ope: false,
+    visi: false,
     lve: false,
     mmm: false,
+    att: false,
+    setp: false
   });
 
   // State for disabled menus
@@ -99,7 +102,8 @@ export default function Home() {
       console.log(`Error fetching ${menuType}:`, error);
       return [];
     }
-  };
+  }; 
+
 
   // Extract program information from the nested response
   const extractProgramsFromResponse = (data) => {
