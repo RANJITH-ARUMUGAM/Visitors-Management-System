@@ -18,7 +18,7 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
     Rejected: 0
   });
   const [selectedTimeframe, setSelectedTimeframe] = useState('today');
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [flippedId, setFlippedId] = useState(null);
@@ -36,8 +36,7 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
     setTitle("Visitors Details");
     fetchAllData();
     setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterStatus, searchTerm, setTitle]);
+  }, [setTitle]);
 
 
   const fetchAllData = async () => {
@@ -494,18 +493,22 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
 
       `}</style>
 
-      <h1 className="text-3xl font-bold text-gray-900 mt-2 mb-8 text-center" style={{ textShadow: '0px 13px 10px rgb(0, 0, 0)' }}>
-        Visitors Dashboard
+      <h1 className="text-3xl font-bold text-gray-900 mt-2 mb-1 text-left pl-2" style={{ textShadow: '0px 13px 10px rgb(0, 0, 0)' }}>
+        Visitors Lobby Dashboard
       </h1>
+      <p className="text-slate-600 mt-2 pl-2">Manage and track all Visitors and Appointments</p>
 
       {/* Header */}
       <div className="mb-3">
         <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-xl font-semibold mb-2 text-gray-800 text-center rounded-xl shadow w-150">Visitor Management System</h2>
-            {/* Removed real-time monitoring UI */}
+          <div className='w-180'>
+            <h2 className="text-xl font-semibold mb-2 text-gray-800 text-center rounded-xl shadow px-2">Summary Cards</h2>
           </div>
           <div className="flex space-x-3">
+            <button className="bg-gray-50 text-black  text-sm px-2 py-2 rounded-lg hover:bg-gray-300 flex items-center" onClick={fetchAllData}           >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </button>
             <button className="bg-green-500 text-white  text-sm px-2 py-2 rounded-lg hover:bg-green-700 flex items-center" onClick={() => navigate('/visitorsdetails/AddGateEntry')}>
               <Plus className="w-4 h-4 mr-2" />
               New Visitor
@@ -516,7 +519,7 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
 
       {/* Advanced Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-        <div className="bg-gray-300 rounded-xl p-3 shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[200px]">
+        <div className="bg-gray-20 rounded-xl p-3 shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[200px]">
           <Users className="absolute right-2 bottom-2 w-24 h-24 text-blue-400 opacity-60 pointer-events-none select-none" />
           <div className="flex items-center justify-between">
             <div>
@@ -526,7 +529,7 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
           </div>
         </div>
 
-        <div className="bg-gray-300 rounded-xl p-3 shadow-lg border-l-4 border-green-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
+        <div className="bg-gray-20 rounded-xl p-3 shadow-lg border-l-4 border-green-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
           <UserCheck className="absolute right-2 bottom-2 w-24 h-24 text-green-400 opacity-60 pointer-events-none select-none" />
           <div className="flex items-center justify-between">
             <div>
@@ -537,18 +540,18 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
           </div>
         </div>
 
-        <div className="bg-gray-300 rounded-xl p-3 shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
+        <div className="bg-gray-20 rounded-xl p-3 shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
           <Calendar className="absolute right-2 bottom-2 w-24 h-24 text-purple-400 opacity-60 pointer-events-none select-none" />
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-md text-black-600 mb-2 whitespace-nowrap">Pre-Booked</p>
+              <p className="text-md text-black-600 mb-2 whitespace-nowrap">Appointments</p>
               <p className="text-3xl font-bold text-purple-600">{metrics.preBooked}</p>
               <p className="text-xs text-purple-600 mt-2 whitespace-nowrap">Upcoming visits</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gray-300 rounded-xl p-3 shadow-lg border-l-4 border-orange-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
+        <div className="bg-gray-20 rounded-xl p-3 shadow-lg border-l-4 border-orange-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
           <Clock className="absolute right-2 bottom-2 w-24 h-24 text-orange-400 opacity-60 pointer-events-none select-none" />
           <div className="flex items-center justify-between">
             <div>
@@ -559,7 +562,7 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
           </div>
         </div>
 
-        <div className="bg-gray-300 rounded-xl p-3 shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
+        <div className="bg-gray-20 rounded-xl p-3 shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
           <LogOut className="absolute right-2 bottom-2 w-24 h-24 text-blue-400 opacity-60 pointer-events-none select-none" />
           <div className="flex items-center justify-between">
             <div>
@@ -570,7 +573,7 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
           </div>
         </div>
 
-        <div className="bg-gray-300 rounded-xl p-3 shadow-lg border-l-4 border-red-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
+        <div className="bg-gray-20 rounded-xl p-3 shadow-lg border-l-4 border-red-500 hover:shadow-xl transition-shadow relative overflow-hidden min-h-[180px]">
           <Shield className="absolute right-2 bottom-2 w-24 h-24 text-red-400 opacity-60 pointer-events-none select-none" />
           <div className="flex items-center justify-between">
             <div>
@@ -584,11 +587,31 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
 
       {/* Advanced Controls */}
       <div className="rounded-xl p-2 shadow-lg mb-2">
-        <div className="flex justify-between items-center mb-1">
-          <h2 className="text-xl font-semibold mb-2 px-2 text-gray-800 text-center rounded-xl shadow">Visitor Management</h2>
-          <div className="flex space-x-3">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+
+          {/* Search Box */}
+          <div className="flex-1 min-w-[260px]">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search visitors, companies, hosts, or phone numbers..."
+                className="w-full pl-10 pr-4 py-1.5 border border-gray-200 rounded-lg 
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Timeframe + Export */}
+          <div className="flex items-center gap-3 whitespace-nowrap">
             <select
-              className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="text-center border border-gray-200 rounded-lg py-1.5 px-2 text-sm 
+                 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={selectedTimeframe}
               onChange={(e) => setSelectedTimeframe(e.target.value)}
             >
@@ -596,78 +619,188 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
               <option value="week">This Week</option>
               <option value="month">This Month</option>
             </select>
+
             <button
-              className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm hover:bg-gray-100 flex items-center transition-colors"
+              className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm
+                 hover:bg-gray-100 flex items-center transition-colors"
               onClick={handleExport}
             >
               <Download className="w-4 h-4 mr-2" />
               Export
             </button>
-            <button
-              className="bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 text-sm hover:bg-gray-100 flex items-center transition-colors"
-              onClick={fetchAllData}
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Refresh
-            </button>
           </div>
+
         </div>
 
-        <div className="flex flex-wrap gap-4 mb-4">
-          <div className="flex-1 min-w-64">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search visitors, companies, hosts, or phone numbers..."
-                className="w-full pl-10 pr-4 py-1.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setPage(1); // Reset to first page
+        {/* Filter Buttons + List/Grid Toggle */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+
+          {/* Status Filters */}
+          <div className="flex flex-wrap gap-2">
+            {[
+              { label: `All (${allData.length})`, value: "all", colors: "from-gray-500 to-gray-700" },
+              { label: `Checked In (${metrics.currentlyInside})`, value: "Accepted", colors: "from-green-500 to-emerald-600" },
+              { label: `Appointments (${metrics.preBooked})`, value: "pre-booked", colors: "from-cyan-500 to-blue-600" },
+              { label: `Pending (${metrics.Pending})`, value: "Pending", colors: "from-yellow-400 to-amber-500" },
+              { label: `Rejected (${metrics.Rejected})`, value: "Rejected", colors: "from-red-500 to-rose-600" },
+              { label: `Checked Out (${metrics.checkedOut})`, value: "Checked Out", colors: "from-purple-500 to-indigo-600" }
+            ].map((btn) => (
+              <button
+                type="button"
+                key={btn.value}
+                onClick={() => {
+                  setFilterStatus(btn.value);
+                  setPage(1);
                 }}
-              />
-            </div>
+                className={`px-3 py-1.5 text-sm rounded-lg border transition-all duration-200
+        ${filterStatus === btn.value
+                    ? `text-white border-transparent bg-gradient-to-r ${btn.colors} shadow-md`
+                    : "border-gray-300 text-gray-700 bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-200"
+                  }`}
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
-          <select
-            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={filterStatus}
-            onChange={(e) => {
-              setFilterStatus(e.target.value);
-              setPage(1); // Reset to first page
-            }}
-          >
-            <option value="all">All Status ({allData.length})</option>
-            <option value="Accepted">Checked In ({metrics.currentlyInside})</option>
-            <option value="pre-booked">Pre-booked ({metrics.preBooked})</option>
-            <option value="Pending">Pending ({metrics.Pending})</option>
-            <option value="Rejected">Rejected ({metrics.Rejected})</option>
-            <option value="Checked Out">Checked Out ({metrics.checkedOut})</option>
-          </select>
+
+
+          {/* List / Grid Toggle */}
           <div className="flex border border-gray-200 rounded-lg overflow-hidden">
             <button
-              className={`px-2 py-1.5 text-sm transition-colors ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
-              onClick={() => setViewMode('grid')}
-            >
-              Grid
-            </button>
-            <button
-              className={`px-2 py-1.5 text-sm transition-colors ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              className={`px-2 py-1.5 text-sm transition-colors 
+          ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
               onClick={() => setViewMode('list')}
             >
               List
             </button>
+
+            <button
+              className={`px-2 py-1.5 text-sm transition-colors 
+          ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-600 hover:bg-gray-50'}`}
+              onClick={() => setViewMode('grid')}
+            >
+              Card
+            </button>
           </div>
+
         </div>
 
+
         {/* Visitor Cards/List */}
-        {viewMode === 'grid' ? (
+        {viewMode === 'list' ? (
+
+          <div className="rounded-lg overflow-hidden mt-0">
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th >Visitor</th>
+                  <th >Meeting</th>
+                  <th >Time</th>
+                  <th >Status</th>
+                  <th >Location</th>
+                  <th >Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedVisitors.length > 0 ? (
+                  paginatedVisitors.map((visitor) => (
+                    <tr key={visitor.id}>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10">
+                            <img
+                              className="h-10 w-10 rounded-full"
+                              src={visitor.photo}
+                              alt={visitor.name}
+                            />
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">{visitor.name}</div>
+                            <div className="text-sm text-gray-500">{visitor.company}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{visitor.toMeet}</div>
+                        <div className="text-sm text-gray-500">{visitor.purpose}</div>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        {visitor.checkIn ? (
+                          <div>
+                            <div className="text-sm text-gray-900">{formatTime(visitor.checkIn)}</div>
+                            {visitor.checkOut && (
+                              <div className="text-sm text-gray-500">{formatTime(visitor.checkOut)}</div>
+                            )}
+                          </div>
+                        ) : visitor.bookingTime ? (
+                          <div className="text-sm text-gray-900">{visitor.bookingTime}</div>
+                        ) : (
+                          <div className="text-sm text-gray-500">N/A</div>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClass(visitor.status)}`}>
+                          {visitor.status}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                        {visitor.location}
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() => handleView(visitor.id)}
+                            title="View Details"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          {visitor.status !== 'Checked Out' && visitor.status !== 'Rejected' && (
+                            <button
+                              className="text-green-600 hover:text-green-800"
+                              onClick={() => handleEdit(visitor.id)}
+                              title="Edit"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                          )}
+                          <button
+                            className="text-red-600 hover:text-blue-800"
+                            onClick={() => handleDelete(visitor.id)}
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          {visitor.status === 'Accepted' && (
+                            <button
+                              className="text-red-600 hover:text-red-800"
+                              onClick={() => handleCheckout(visitor.id)}
+                              title="Check Out"
+                            >
+                              <LogOut className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="px-3 py-2 text-center text-sm text-gray-500">
+                      No visitors found matching your criteria.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
           <div className="flex flex-wrap gap-2 justify-start">
             {paginatedVisitors.slice(0, 5).map((visitor) => (
               <div key={visitor.id} className="flipperContainer mb-2">
                 <div className={`flipper ${flippedId === visitor.id ? 'flipped' : ''}`}>
                   {/* Card Front */}
-                  <div className="cardFront bg-whitesmoke-100 pb-2 rounded-[20px] shadow-xl overflow-hidden flex flex-col" onClick={() => toggleFlip(visitor.id)}>
+                  <div className="cardFront  pb-2 rounded-[20px] shadow-xl overflow-hidden flex flex-col" onClick={() => toggleFlip(visitor.id)}>
                     {/* Top Header */}
                     <div
                       className="bg-indigo-300 h-32 relative flex justify-center"
@@ -786,117 +919,10 @@ const AdvancedVisitorDashboard = ({ setTitle }) => {
               </div>
             ))}
           </div>
-        ) : (
-          <div className="bg-white rounded-lg overflow-hidden mt-0">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th >Visitor</th>
-                  <th >Meeting</th>
-                  <th >Time</th>
-                  <th >Status</th>
-                  <th >Location</th>
-                  <th >Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {paginatedVisitors.length > 0 ? (
-                  paginatedVisitors.map((visitor) => (
-                    <tr key={visitor.id}>
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <img
-                              className="h-10 w-10 rounded-full"
-                              src={visitor.photo}
-                              alt={visitor.name}
-                            />
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{visitor.name}</div>
-                            <div className="text-sm text-gray-500">{visitor.company}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{visitor.toMeet}</div>
-                        <div className="text-sm text-gray-500">{visitor.purpose}</div>
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        {visitor.checkIn ? (
-                          <div>
-                            <div className="text-sm text-gray-900">{formatTime(visitor.checkIn)}</div>
-                            {visitor.checkOut && (
-                              <div className="text-sm text-gray-500">{formatTime(visitor.checkOut)}</div>
-                            )}
-                          </div>
-                        ) : visitor.bookingTime ? (
-                          <div className="text-sm text-gray-900">{visitor.bookingTime}</div>
-                        ) : (
-                          <div className="text-sm text-gray-500">N/A</div>
-                        )}
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClass(visitor.status)}`}>
-                          {visitor.status}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                        {visitor.location}
-                      </td>
-                      <td className="px-3 py-2 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
-                          <button
-                            className="text-blue-600 hover:text-blue-800"
-                            onClick={() => handleView(visitor.id)}
-                            title="View Details"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                          {visitor.status !== 'Checked Out' && visitor.status !== 'Rejected' && (
-                            <button
-                              className="text-green-600 hover:text-green-800"
-                              onClick={() => handleEdit(visitor.id)}
-                              title="Edit"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
-                          )}
-                          <button 
-                             className="text-red-600 hover:text-blue-800"
-                              onClick={() => handleDelete(visitor.id)}
-                              title="Delete"
-                              >
-                            <Trash2 className="w-4 h-4" />
-                            </button>
-                          {visitor.status === 'Accepted' && (
-                            <button
-                              className="text-red-600 hover:text-red-800"
-                              onClick={() => handleCheckout(visitor.id)}
-                              title="Check Out"
-                            >
-                              <LogOut className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="px-3 py-2 text-center text-sm text-gray-500">
-                      No visitors found matching your criteria.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
         )}
 
         {/* Pagination */}
-        {/* Pagination */}
-        <div className="flex justify-end items-center mt-4 px-2">
+        <div className="flex justify-end items-center mt-1 px-2">
           <div className="text-sm text-gray-700">
             Showing <span className="font-medium">{(page - 1) * entriesPerPage + 1}</span> to <span className="font-medium">
               {Math.min(page * entriesPerPage, filteredVisitors.length)}
@@ -941,3 +967,5 @@ const getStatusClass = (status) => {
 };
 
 export default AdvancedVisitorDashboard;
+
+

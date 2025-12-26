@@ -1,4 +1,3 @@
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -14,6 +13,7 @@ const multer = require('multer');
 const moment = require('moment');
 const CryptoJS = require("crypto-js");
 const AES_SECRET_KEY = "password";
+const twilio = require("twilio");
 
 const QRCode = require('qrcode');
 
@@ -45,6 +45,11 @@ const db = new Pool({
   database: process.env.DB_NAME || "VGMS",
   port: process.env.DB_PORT || 5432
 });
+
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -1349,6 +1354,7 @@ app.post('/verifyOTP', async (req, res) => {
   }
 });
 // //////////////////////////////////////////////////////////////////////  visitors SMS OTP //////////////
+
 //////////////////////////////////////////////////////////////////////  Show all visitors imges //////////////
 
 app.get('/visitor-image/:id', async (req, res) => {
@@ -1371,39 +1377,50 @@ app.get('/visitor-image/:id', async (req, res) => {
 ///  Show all visitors list //////////////
 app.get('/allvisitors', (req, res) => {
   console.log("/allvis visitors request received");
-  db.query(`SELECT 
-              ge.gms_gateentry_id AS id,
-              ge.gms_visitorname AS visitor_name,
-              ge.gms_visitorfrom AS visitor_from,
-              ge.gms_tomeet AS to_meet_employeename,
-              -- From employee table
-              emp.gms_department AS emp_department,
-              emp.gms_designation AS emp_designation,
-              -- From admin user table
-              adm.adm_users_deptid AS adm_department_id,
-              adm.adm_users_jobid AS adm_role_id,
-              ge.gms_visitpurpose AS purpose,
-              ge.gms_expectedexit AS expected_exit_time,
-              ge.gms_vehicleno AS vehicle_no,
-              ge.gms_intime AS check_in,
-              ge.gms_outtime AS check_out,
-              ge.gms_status AS status,
-              ge.gms_identificationtype AS id_type,
-              ge.gms_identificationno AS id_number,
-              ge.gms_mobileno AS phone_number,
-              ge.gms_emailid AS email,
-              ge.created_on,
-              ge.created_by,
-              ge.modified_on,
-              ge.modified_by,
-              ge.gms_visitorimage AS image_data,
-              ge.gms_visitorimage_bytea AS image_blob
-          FROM public.gms_gate_entries ge
-          LEFT JOIN public.gms_emplayoee_tbl emp
-                ON ge.gms_tomeet = CONCAT(emp.gms_first_name, ' ', emp.gms_last_name)
-          LEFT JOIN public.adm_user_t adm
-                ON ge.gms_tomeet = CONCAT(adm.adm_users_firstname, ' ', adm.adm_users_lastname)
-          ORDER BY ge.created_on DESC;`, (err, results) => {
+  db.query(`SELECT
+            le.gms_lobbyentry_id        AS id,
+            le.gms_visitorname         AS visitor_name,
+            le.gms_visitorfrom         AS visitor_from,
+            le.gms_tomeet              AS to_meet_employeename,
+
+            -- From employee table
+            emp.gms_department         AS emp_department,
+            emp.gms_designation        AS emp_designation,
+
+            -- From admin user table
+            adm.adm_users_deptid       AS adm_department_id,
+            adm.adm_users_jobid        AS adm_role_id,
+
+            le.gms_visitpurpose        AS purpose,
+
+            -- lobbyentry does NOT have expected exit → derived from intime + pass duration if needed
+            le.gms_intime              AS check_in,
+            le.gms_outtime             AS check_out,
+
+            le.gms_status              AS status,
+
+            le.gms_identificationtype  AS id_type,
+            le.gms_identificationno    AS id_number,
+
+            le.gms_mobileno            AS phone_number,
+            le.gms_emailid             AS email,
+
+            le.created_on,
+            le.created_by,
+            le.modified_on,
+            le.modified_by,
+
+            le.gms_visitorimage        AS image_data
+
+        FROM public.gms_lobbyentry le
+
+        LEFT JOIN public.gms_emplayoee_tbl emp
+              ON le.gms_tomeet = CONCAT(emp.gms_first_name, ' ', emp.gms_last_name)
+
+        LEFT JOIN public.adm_user_t adm
+              ON le.gms_tomeet = CONCAT(adm.adm_users_firstname, ' ', adm.adm_users_lastname)
+
+        ORDER BY le.created_on DESC;`, (err, results) => {
     if (err) {
       console.error("Database query error:", err);
       return res.status(500).send({
@@ -1489,11 +1506,26 @@ app.get("/editvisitors/:id", (req, res) => {
 app.get("/viewvisitors/:id", (req, res) => {
   const id = req.params.id;
   console.log('id', id)
-  db.query(
-    `SELECT gms_gateentry_id, gms_visitorname, gms_visitorfrom, gms_tomeet, gms_visitpurpose, gms_vehicleno, gms_identificationtype, gms_identificationno, gms_mobileno, gms_emailid, gms_intime, gms_outtime, gms_status, created_on, created_by, modified_on, modified_by, gms_visitorimage, gms_visitorimage_bytea, entry_time, gms_tomeetemail
-  FROM public.gms_gate_entries 
-       WHERE gms_gateentry_id = $1`,
-    [id],
+  db.query(`SELECT
+          gms_lobbyentry_id AS id,
+          gms_visitorname,
+          gms_visitorfrom,
+          gms_tomeet,
+          gms_visitpurpose,
+          gms_identificationtype,
+          gms_identificationno,
+          gms_mobileno,
+          gms_emailid,
+          gms_intime,
+          gms_outtime,
+          gms_status,
+          created_on,
+          created_by,
+          modified_on,
+          modified_by,
+          gms_visitorimage
+      FROM public.gms_lobbyentry
+      WHERE gms_lobbyentry_id = $1;`, [id],
     (error, results) => {
       if (error) {
         console.error("Error executing query", error);
@@ -1661,23 +1693,39 @@ app.put('/updatevisitor/:id', async (req, res) => {
 app.put('/updateviewvisitorstatus/:id', async (req, res) => {
   const { id } = req.params;
   const { gms_status } = req.body;
+
+  if (!gms_status) {
+    return res.status(400).json({ message: 'gms_status is required' });
+  }
+
   try {
     const updateQuery = `
-          UPDATE gms_gate_entries
-          SET gms_status = $1
-          WHERE gms_gateentry_id = $2 AND gms_status = 'Checked In'
-          RETURNING *;
-      `;
+      UPDATE public.gms_lobbyentry
+      SET gms_status = $1,
+          modified_on = NOW()
+      WHERE gms_lobbyentry_id = $2
+      RETURNING *;
+    `;
+
     const result = await db.query(updateQuery, [gms_status, id]);
+
     if (result.rowCount === 0) {
       return res.status(404).json({ message: 'Visitor not found' });
     }
-    res.status(200).json({ message: 'Status updated successfully', visitor: result.rows[0] });
+
+    res.status(200).json({
+      success: true,
+      message: 'Status updated successfully',
+      visitor: result.rows[0]
+    });
+
   } catch (error) {
-    console.error('Error updating status:', error);
+    console.error('Error updating visitor status:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/gettingemailsfromtwotable', async (req, res) => {
@@ -4997,7 +5045,529 @@ app.delete('/pre-bookings/:id', async (req, res) => {
     });
   }
 });
+
 ////-------------------------------------End here ------------------------------------------------------////
+
+// Function to generate a unique pass code
+function generatePassCode(length) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+
+// 2. Placeholder for fetching old visitors (Search suggestions)
+app.get('/getOldVisitors', async (req, res) => {
+  try {
+    const query = `
+      SELECT DISTINCT ON (gms_mobileno)
+        gms_lobbyentry_id,
+        gms_visitorname        AS "GMS_VisitorName",
+        gms_visitorfrom        AS "GMS_VisitorFrom",
+        gms_mobileno           AS "GMS_MobileNo",
+        gms_emailid            AS "GMS_EmailID",
+        gms_visitorimage       AS "GMS_VisitorImage",
+        created_on
+      FROM public.gms_lobbyentry
+      ORDER BY gms_mobileno, created_on DESC
+      LIMIT 50;
+    `;
+
+    const result = await db.query(query);
+
+    res.status(200).json(result.rows);
+
+  } catch (error) {
+    console.error('Error fetching old visitors:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+// 3. Placeholder for checking and returning existing visitor data
+// 3. Placeholder for checking and returning existing visitor data
+app.post('/checkExistingVisitor', async (req, res) => {
+  const { contact_info, contact_type } = req.body;
+
+  if (!contact_info || !contact_type) {
+    return res.status(400).json({ message: 'contact_info and contact_type are required' });
+  }
+
+  try {
+    let query = '';
+    let values = [];
+
+    if (contact_type === 'email') {
+      query = `
+        SELECT 
+          gms_visitorname AS "GMS_VisitorName",
+          gms_visitorfrom AS "GMS_VisitorFrom",
+          gms_tomeet AS "GMS_ToMeet",
+          gms_visitpurpose AS "GMS_VisitPurpose",
+          gms_identificationtype AS "GMS_IdentificationType",
+          gms_identificationno AS "GMS_IdentificationNo",
+          gms_mobileno AS "GMS_MobileNo",
+          gms_emailid AS "GMS_EmailID",
+          gms_visitorimage AS "GMS_VisitorImage",
+          gms_status AS "GMS_Status",
+          address,
+          gender,
+          COUNT(*) as total_visits,
+          MAX(created_on) as last_visit
+        FROM public.gms_lobbyentry
+        WHERE gms_emailid = $1
+        GROUP BY 
+          gms_visitorname, gms_visitorfrom, gms_tomeet, gms_visitpurpose,
+          gms_identificationtype, gms_identificationno, gms_mobileno,
+          gms_emailid, gms_visitorimage, gms_status, address, gender
+        ORDER BY last_visit DESC
+        LIMIT 1
+      `;
+      values = [contact_info.toLowerCase()];
+    }
+
+    if (contact_type === 'sms') {
+      query = `
+        SELECT 
+          gms_visitorname AS "GMS_VisitorName",
+          gms_visitorfrom AS "GMS_VisitorFrom",
+          gms_tomeet AS "GMS_ToMeet",
+          gms_visitpurpose AS "GMS_VisitPurpose",
+          gms_identificationtype AS "GMS_IdentificationType",
+          gms_identificationno AS "GMS_IdentificationNo",
+          gms_mobileno AS "GMS_MobileNo",
+          gms_emailid AS "GMS_EmailID",
+          gms_visitorimage AS "GMS_VisitorImage",
+          gms_status AS "GMS_Status",
+          address,
+          gender,
+          COUNT(*) as total_visits,
+          MAX(created_on) as last_visit
+        FROM public.gms_lobbyentry
+        WHERE gms_mobileno = $1
+        GROUP BY 
+          gms_visitorname, gms_visitorfrom, gms_tomeet, gms_visitpurpose,
+          gms_identificationtype, gms_identificationno, gms_mobileno,
+          gms_emailid, gms_visitorimage, gms_status, address, gender
+        ORDER BY last_visit DESC
+        LIMIT 1
+      `;
+      values = [contact_info];
+    }
+
+    const result = await db.query(query, values);
+
+    if (result.rows.length > 0) {
+      return res.status(200).json({
+        success: true,
+        exists: true,
+        visitor: result.rows[0],
+        total_visits: result.rows[0].total_visits,
+        last_visit: result.rows[0].last_visit,
+        is_frequent_visitor: result.rows[0].total_visits > 3 // Define frequent as >3 visits
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      exists: false
+    });
+
+  } catch (error) {
+    console.error('Error checking existing visitor:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+// Add this endpoint for quick registration (optional)
+app.post('/quickVisitorEntry', async (req, res) => {
+  const client = await db.connect();
+
+  try {
+    const {
+      GMS_VisitorName,
+      GMS_VisitorFrom,
+      GMS_VisitorImage,
+      GMS_ToMeet,
+      GMS_VisitPurpose,
+      GMS_MobileNo,
+      GMS_EmailID,
+      skip_otp = false
+    } = req.body;
+
+    // Validate required fields
+    if (!GMS_VisitorName || !GMS_MobileNo || !GMS_ToMeet) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Missing required fields' 
+      });
+    }
+
+    const query = `
+      INSERT INTO gms_lobbyentry (
+        gms_visitorname,
+        gms_visitorfrom,
+        gms_tomeet,
+        gms_visitpurpose,
+        gms_identificationtype,
+        gms_identificationno,
+        gms_mobileno,
+        gms_emailid,
+        gms_visitorimage,
+        gms_intime,
+        gms_status,
+        created_by,
+        created_on,
+        skip_otp_verification
+      ) VALUES ($1, $2, $3, $4, 1, 'N/A', $5, $6, $7, 
+                NOW(), false, 'quick_entry', NOW(), $8)
+      RETURNING gms_lobbyentry_id;
+    `;
+
+    const values = [
+      GMS_VisitorName,
+      GMS_VisitorFrom || '',
+      GMS_ToMeet,
+      GMS_VisitPurpose || 'General Meeting',
+      GMS_MobileNo,
+      GMS_EmailID || '',
+      GMS_VisitorImage,
+      skip_otp
+    ];
+
+    const result = await client.query(query, values);
+
+    if (result.rows.length > 0) {
+      // Generate pass code
+      const passCode = `VST-${Date.now().toString().slice(-6)}`;
+      const tempVisitorId = `TEMP-${Date.now().toString().slice(-8)}`;
+
+      res.status(201).json({
+        success: true,
+        message: "Quick entry created successfully.",
+        gms_lobbyentry_id: result.rows[0].gms_lobbyentry_id,
+        passCode: passCode,
+        tempVisitorId: tempVisitorId,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "Failed to create quick entry"
+      });
+    }
+
+  } catch (err) {
+    console.error("Quick Entry Error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error during quick entry"
+    });
+  } finally {
+    client.release();
+  }
+});
+
+// 6. Visitor Lobby Entry Submission (Step 3)
+app.post('/visitorlobbyentry', async (req, res) => {
+  const client = await db.connect();
+
+  try {
+    const {
+      GMS_VisitorName,
+      GMS_VisitorFrom,
+      GMS_VisitorImage,
+      GMS_ToMeet,
+      GMS_VisitPurpose,
+      GMS_IdentificationType,
+      GMS_IdentificationNo,
+      GMS_MobileNo,
+      GMS_EmailID,
+      GMS_Status,
+      created_by
+    } = req.body;
+
+    // Apply safe defaults
+    const safeStatus = (GMS_Status === undefined || GMS_Status === null) ? false : GMS_Status;
+    const safeIDType = GMS_IdentificationType || 1;
+    const safeIDNo = GMS_IdentificationNo || "N/A";
+
+    // Server timestamps
+    const serverCreatedOn = new Date().toISOString();
+
+    const query = `
+      INSERT INTO gms_lobbyentry (
+        gms_visitorname,
+        gms_visitorfrom,
+        gms_tomeet,
+        gms_visitpurpose,
+        gms_identificationtype,
+        gms_identificationno,
+        gms_mobileno,
+        gms_emailid,
+        gms_visitorimage,
+        gms_intime,
+        gms_status,
+        created_by,
+        created_on,
+        gms_outtime,
+        modified_on,
+        modified_by
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6,
+        $7, $8, $9,
+        NOW(),      -- gms_intime
+        $10,
+        $11,
+        $12,
+        NULL, NULL, NULL
+      )
+      RETURNING gms_lobbyentry_id;
+    `;
+
+    const values = [
+      GMS_VisitorName,
+      GMS_VisitorFrom,
+      GMS_ToMeet,
+      GMS_VisitPurpose,
+      safeIDType,
+      safeIDNo,
+      GMS_MobileNo,
+      GMS_EmailID,
+      GMS_VisitorImage,
+      safeStatus,
+      created_by,
+      serverCreatedOn
+    ];
+
+    const result = await client.query(query, values);
+
+    if (result.rows.length > 0) {
+      res.status(201).json({
+        success: true,
+        message: "Visitor entry created successfully.",
+        gms_lobbyentry_id: result.rows[0].gms_lobbyentry_id
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "Failed to insert entry."
+      });
+    }
+
+  } catch (err) {
+    console.error("Database Error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error during lobby entry submission."
+    });
+  } finally {
+    client.release();
+  }
+});
+
+
+app.post('/sendVisitorNotification', async (req, res) => {
+  const clientDb = await db.connect();
+
+  try {
+    const {
+      lobbyEntryId,      // INTEGER
+      tempVisitorId,     // "TEMP-85428555"
+      passCode,
+      visitor,
+      qrCodeUrl
+    } = req.body;
+
+    if (!lobbyEntryId || !visitor) {
+      return res.status(400).json({ message: 'Invalid payload' });
+    }
+
+    const {
+      GMS_VisitorName,
+      GMS_EmailID,
+      GMS_MobileNo,
+      GMS_ToMeet,
+      GMS_ToMeetEmail,
+      GMS_VisitPurpose
+    } = visitor;
+
+    await clientDb.query('BEGIN');
+
+    /* ===========================
+       EMAIL TO VISITOR (WITH QR)
+    ============================ */
+    await transporter.sendMail({
+      from: `"Visitor Management System" <${process.env.EMAIL_USER}>`,
+      to: GMS_EmailID,
+      subject: 'Your Visit Is Confirmed',
+      html: `
+        <div style="font-family:Arial">
+          <h2>Visit Confirmation</h2>
+          <p>Dear <b>${GMS_VisitorName}</b>,</p>
+
+          <table cellpadding="6">
+            <tr><td>Host</td><td>${GMS_ToMeet}</td></tr>
+            <tr><td>Purpose</td><td>${GMS_VisitPurpose}</td></tr>
+            <tr><td>Pass Code</td><td><b>${passCode}</b></td></tr>
+          </table>
+
+          <p><b>QR Code (For Entry)</b></p>
+          <img src="${qrCodeUrl}" width="160" />
+
+          <p>Temporary ID: ${tempVisitorId}</p>
+        </div>
+      `
+    });
+
+    await clientDb.query(
+      `INSERT INTO gms_notifications
+       (recipient_type, recipient_id, message, sent_via)
+       VALUES ($1, $2, $3, 'email')`,
+      [
+        'VISITOR',
+        lobbyEntryId,
+        `Visitor email sent (Temp ID: ${tempVisitorId}, Pass: ${passCode})`
+      ]
+    );
+
+    /* ===========================
+       EMAIL TO HOST (NO QR)
+    ============================ */
+    await transporter.sendMail({
+      from: `"Visitor Management System" <${process.env.EMAIL_USER}>`,
+      to: GMS_ToMeetEmail,
+      subject: `Visitor Alert – ${GMS_VisitorName}`,
+      html: `
+        <div style="font-family:Arial">
+          <h3>Visitor Alert</h3>
+          <p><b>${GMS_VisitorName}</b> is visiting you.</p>
+
+          <table cellpadding="6">
+            <tr><td>Mobile</td><td>${GMS_MobileNo}</td></tr>
+            <tr><td>Purpose</td><td>${GMS_VisitPurpose}</td></tr>
+            <tr><td>Pass Code</td><td>${passCode}</td></tr>
+          </table>
+        </div>
+      `
+    });
+
+    await clientDb.query(
+      `INSERT INTO gms_notifications
+       (recipient_type, recipient_id, message, sent_via)
+       VALUES ($1, $2, $3, 'email')`,
+      [
+        'HOST',
+        lobbyEntryId,
+        `Host email sent for ${GMS_VisitorName} (Temp ID: ${tempVisitorId})`
+      ]
+    );
+
+    await clientDb.query('COMMIT');
+
+    res.json({ success: true });
+
+  } catch (err) {
+    await clientDb.query('ROLLBACK');
+    console.error('Email Notification Error:', err);
+    res.status(500).json({ success: false });
+  } finally {
+    clientDb.release();
+  }
+});
+
+
+
+// 7. Pass Generation (Step 5)
+app.post('/generatePass', async (req, res) => {
+  const client = await db.connect();
+  try {
+    const {
+      gateentry_id, valid_from, valid_to, sendSMS, sendEmail,
+      visitorName, visitorMobile, hostEmail
+    } = req.body;
+
+    if (!gateentry_id) {
+      return res.status(400).json({ success: false, message: 'Gate entry ID is required to create a pass.' });
+    }
+
+    // 1. Generate unique pass code
+    let passCode;
+    let isUnique = false;
+    let attempts = 0;
+
+    // Ensure the generated pass code is unique
+    while (!isUnique && attempts < 10) {
+      passCode = generatePassCode(PASS_CODE_LENGTH);
+      const checkQuery = 'SELECT pass_code FROM gms_visitor_passes WHERE pass_code = $1';
+      const checkResult = await client.query(checkQuery, [passCode]);
+      if (checkResult.rows.length === 0) {
+        isUnique = true;
+      }
+      attempts++;
+    }
+
+    if (!isUnique) {
+      return res.status(500).json({ success: false, message: 'Failed to generate a unique pass code.' });
+    }
+
+    // 2. Insert into gms_visitor_passes
+    const insertQuery = `
+            INSERT INTO gms_visitor_passes (
+                gateentry_id, pass_code, valid_from, valid_to, status, created_at
+            ) VALUES (
+                $1, $2, $3, $4, $5, NOW()
+            ) RETURNING pass_id, pass_code;
+        `;
+
+    // Valid_from and Valid_to are ISO strings passed from client
+    const values = [
+      gateentry_id,
+      passCode,
+      valid_from,
+      valid_to,
+      'active' // Assuming a successful creation means 'active' status
+    ];
+
+    const result = await client.query(insertQuery, values);
+
+    // 3. Send notifications (optional)
+    const passId = result.rows[0].pass_id;
+    const passMessage = `Your visitor pass code is ${passCode}. Valid until ${new Date(valid_to).toLocaleDateString()}. Entry ID: ${gateentry_id}.`;
+
+    if (sendSMS && visitorMobile) {
+      await sendNotification('SMS', visitorMobile, passMessage);
+    }
+
+    if (sendEmail && hostEmail) {
+      await sendNotification('Email', hostEmail, `New Visitor Pass Generated for ${visitorName}. ${passMessage}`);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Pass generated successfully.',
+      pass_code: passCode,
+      pass_id: passId
+    });
+
+  } catch (err) {
+    console.error('Database Error:', err);
+    res.status(500).json({ success: false, message: 'Server error during pass generation.' });
+  } finally {
+    client.release();
+  }
+});
+
+
+
+////-------------------------------------End here ------------------------------------------------------////
+
+
+
+
 app.listen(PORT, () => {
   console.log("Connected to backend connection..");
   console.log(`Server running on http://ServerPort:${PORT}`);

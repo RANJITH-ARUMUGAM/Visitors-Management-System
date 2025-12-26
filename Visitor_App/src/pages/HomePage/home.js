@@ -12,11 +12,29 @@ import ChangePassword from '../HomePage/ChangePassword/changePassword.js';
 import Breadcrumbs from './BreadCrumBar/BreadCrum.js';
 import Card from './Card/Card.js';
 import Meta from "../MetaData/MetaForm.js";
+
 import AddGateEntry from "../Transaction/VisitorsDetails/AddGateEntry.js";
 import GenerateVisitorIDCard from "../Transaction/VisitorsDetails/GenerateVisitorIDCard.js";
 import VisitorsDetails from '../Transaction/VisitorsDetails/VisitorsDetails.js';
 import ViewVisitor from '../Transaction/VisitorsDetails/ViewVisitor.js';
 import EditVisitor from '../Transaction/VisitorsDetails/EditVisitor.js';
+
+
+import VisitorsGateDetails from '../Transaction/VisitorsDetails/VisitorsGateDetails.js';
+
+import { VisiAddVisitorModal } from '../Transaction/VisitorsDetails/VisiAddVisitorModal.jsx';
+import { VisiVisitorCard } from '../Transaction/VisitorsDetails/VisiVisitorCard.jsx';
+import { VisiEditVisitorModal } from '../Transaction/VisitorsDetails/VisiEditVisitorModal.jsx';
+import VisiVisitorDashboard  from '../Transaction/VisitorsDetails/VisiVisitorDashboard.jsx';
+
+
+import MetricCard from '../Transaction/VisitorsDetails/VisitorPass/MetricCard.jsx';
+import GeneratePass from '../Transaction/VisitorsDetails/VisitorPass/GeneratePass.jsx';
+import VisitorPassDashboard from '../Transaction/VisitorsDetails/VisitorPass/VisitorPassDashboard.jsx';
+import VisitorpassTable from '../Transaction/VisitorsDetails/VisitorPass/VisitorpassTable.jsx';
+
+
+
 import Appointment from '../Transaction/Appointment/Appointment.js';
 import EditAppointment from '../Transaction/Appointment/EditAppointment.js';
 import ViewAppointment from '../Transaction/Appointment/ViewAppointment.js';
@@ -100,7 +118,7 @@ export default function Home() {
       console.log(`Error fetching ${menuType}:`, error);
       return [];
     }
-  }; 
+  };
 
 
   // Extract program information from the nested response
@@ -262,11 +280,10 @@ export default function Home() {
 
       <div className={`top-navbar ${isSidenavOpen ? 'shift-right-unique' : ''}`}>
         <TopNavbar isSidenavOpen={isSidenavOpen} setIsSidenavOpen={setIsSidenavOpen} />
+        <Breadcrumbs title={title} />
       </div>
-
       <div className={`main-content-unique ${isSidenavOpen ? 'shift-right-unique' : ''}`}>
         <Routes>
-          {/* All your Route components remain exactly the same */}
           <Route path="/" element={<Card setTitle={setTitle} />} />
 
           <Route path="/adminUser" element={<AdminUser setTitle={setTitle} />} />
@@ -281,6 +298,8 @@ export default function Home() {
           <Route path='/visitorsdetails' element={<VisitorsDetails setTitle={setTitle} />} />
           <Route path="/visitorsdetails/editvisitor/:id" element={<EditVisitor setTitle={setTitle} />} />
           <Route path="/visitorsdetails/viewvisitor/:id" element={<ViewVisitor setTitle={setTitle} />} />
+
+          <Route path="/visitorsgatedetails" element={<VisitorsGateDetails setTitle={setTitle} />} />
 
           <Route path="/appointment" element={<Appointment setTitle={setTitle} />} />
           <Route path="/appointment/editappointment/:id" element={<EditAppointment setTitle={setTitle} />} />
@@ -326,6 +345,16 @@ export default function Home() {
 
           <Route path="/userrole" element={<UserRole setTitle={setTitle} />} />
           <Route path="/UserRoleView" element={<UserRoleView setTitle={setTitle} />} />
+
+          <Route path="/visiAddVisitorModal" element={<VisiAddVisitorModal />} />
+          <Route path="/visivisitorcard" element={<VisiVisitorCard />} />
+          <Route path="/visieditvisitormodal" element={<VisiEditVisitorModal />} />
+          <Route path="/visivisitordashboard" element={<VisiVisitorDashboard />} />
+
+          <Route path="/visitorpassdashboard" element={<VisitorPassDashboard />} />
+          <Route path="/generatepassmodal" element={<GeneratePass />} />
+          <Route path="/visitorpasstable" element={<VisitorpassTable />} />
+          <Route path="/metriccard" element={<MetricCard />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
